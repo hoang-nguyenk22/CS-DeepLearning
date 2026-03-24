@@ -8,6 +8,8 @@
 | 1 | Vũ Hoàng Tùng | 2252886 |
 
 ---
+### Introduction
+This landing page provides abstract, reports and implementations of assigments in the Deep Learning Course of HCMUT. 
 
 ### Assignments
 * **[Assignment 1: Image, Text, and Multimodal Classification](./assignment1)**
