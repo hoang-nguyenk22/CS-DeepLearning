@@ -4,6 +4,7 @@ import numpy as np
 import plotly.express as px
 
 import sys
+import os
 project_path = os.path.join(os.getcwd(), "text_classification")
 sys.path.append(0, project_path)
 
