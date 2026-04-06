@@ -39,7 +39,12 @@ class Trans(nn.Module):
         if active_head == 'all':
             return {name: head(lhs) for name, head in self.heads.items()}
         
-        return {active_head: self.heads[active_head](lhs)}
+        res = self.heads[active_head](lhs)
+        
+        if isinstance(res, dict):
+            return res
+            
+        return {active_head: res}
 
     def load_checkpoint(self, path):
         checkpoint = torch.load(path, map_location=self.device, weights_only=False)

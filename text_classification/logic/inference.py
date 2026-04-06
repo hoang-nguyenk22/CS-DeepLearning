@@ -102,7 +102,10 @@ class InferenceEngine:
                 with autocast(device_type='cuda'):
                     out = self.model_trans(trans_input, active_head='l3')
             
-            logits = out['l3'] if isinstance(out, dict) else out
+            if isinstance(out, dict):
+                logits = out.get('l3', out.get('logits', next(iter(out.values()))))
+            else:
+                logits = out
             probs = torch.sigmoid(logits).cpu().numpy()[0]
 
         indices = np.where(probs >= t)[0]
@@ -115,6 +118,7 @@ class InferenceEngine:
             "confidence": probs[indices].tolist(),
             "probs_raw": probs,
             "inference_time": f"{time.time() - start_time:.4f}s",
+            "attention": out.get('attention') if isinstance(out, dict) else None,
             "model_used": model_type
         }
 
@@ -139,3 +143,38 @@ class InferenceEngine:
             "inference_time": f"{time.time() - start_time:.4f}s",
             "probs_raw": combined_probs
         }
+    def visualize_attention(self, data, model_choice='trans'):
+        if model_choice == 'trans':
+            trans_input = self._prepare_trans_input(data)
+            with torch.no_grad():
+                device_type = 'cuda' if 'cuda' in str(self.device) else 'cpu'
+                with autocast(device_type=device_type):
+                    out = self.model_trans(trans_input, active_head='l3')
+            
+            attn_weights = out.get('attention')
+            if attn_weights is None: return None
+
+            text = f"{data.get('title', '')} [SEP] {data.get('main_body', '')}"
+            inputs = self.tokenizer(text, truncation=True, max_length=512)
+            tokens = self.tokenizer.convert_ids_to_tokens(inputs['input_ids'])
+
+            weights = attn_weights.cpu().numpy()[0]
+            return [{"token": t.replace(' ', ''), "weight": float(weights[i])} 
+                    for i, t in enumerate(tokens) if i < len(weights)]
+
+        elif model_choice == 'lstm':
+            full_text = f"{data.get('title', '')} {data.get('main_body', '')} {data.get('recitals', '')}"
+            emb = self.extractor.get_embeddings(full_text)
+            emb = emb.unsqueeze(0).unsqueeze(1) if emb.dim() == 1 else emb.unsqueeze(1)
+            
+            with torch.no_grad():
+                out = self.model_lstm(emb.float().to(self.device))
+            
+            attn_weights = out.get('attention_weights')
+            if attn_weights is None: return None
+
+            tokens = full_text.split()[:512]
+            weights = attn_weights.cpu().numpy().flatten()
+            return [{"token": t, "weight": float(weights[i])} 
+                    for i, t in enumerate(tokens) if i < len(weights)]
+        return None

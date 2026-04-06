@@ -18,14 +18,30 @@ class SelfAttention(nn.Module):
         outputs = (encoder_outputs * weights.unsqueeze(-1)).sum(dim=1)
         return outputs, weights
 
+import torch
+import torch.nn as nn
+
 class MaxHead(nn.Module):
     def __init__(self, dim, num_labels):
         super().__init__()
         self.fc = nn.Linear(dim, num_labels)
 
     def forward(self, x):
-        x = torch.max(x, dim=1)[0]
-        return self.fc(x)
+        batch_size, seq_len, dim = x.shape
+        max_val, max_indices = torch.max(x, dim=1)
+        logits = self.fc(max_val)
+        
+        mask = torch.zeros_like(x, device=x.device)
+        b_idx = torch.arange(batch_size, device=x.device).view(-1, 1).expand(-1, dim)
+        d_idx = torch.arange(dim, device=x.device).view(1, -1).expand(batch_size, -1)
+        
+        mask[b_idx, max_indices, d_idx] = 1.0
+        token_importance = mask.sum(dim=2) / dim
+        
+        return {
+            "l3": logits,
+            "attention": token_importance
+        }
 
 class GlobalAttention(nn.Module):
     def __init__(self, dim, num_labels):

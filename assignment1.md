@@ -20,22 +20,44 @@ Under the instruction of **Dr. Lê Thành Sách**, our group explored advanced D
 * [📄 Full Technical Report (PDF)](./reports/assignment1.pdf)
 
 ---
-<iframe 
-    src="https://odoc-demo.streamlit.app/?embed=true" 
-    style="width:100%; height:850px; border:none;">
-</iframe>
+
 ## 🏆 Project Summaries & Achievements
 
-### 1. Text Classification: LSTM vs. Transformer
-**Author:** Vũ Hoàng Tùng
-* 👉 [Read Full Text Analysis (PDF)](./reports/ass1_text.pdf#)
+### 1. Extreme Multi-Label Text Classification: BiLSTM vs. Transformer
+**Author:** Vũ Hoàng Tùng  
+**Full Report:** [Report on Text Classification.pdf](./reports/ass1_text.pdf)
 
 #### **Abstract**
-Compared Recurrent Neural Networks (LSTM) against Attention-based Transformers on a dataset of 50000+ samples across ~4200 classes. We focused on handling long-range dependencies and semantic nuances in varied sentence lengths.
+Classifying long-form documents within a high-dimensional label space ($10^3$–$10^6$) has been always a formiddable challenge, yet has been needed for solution more than ever, due to the non-stop accumulation of documents, papers of complex domain with many topic overlap. As such a field called XMC. This study benchmarks **BiLSTM-Attention** and **Transformer-based Encoders** on their ability to handle semantic overlap and document length in the **Eurlex57k** dataset.
 
-#### **Key Achievement**
-Implemented a **Transformer-based backbone** that achieved **91.2% F1-score**, outperforming the LSTM baseline by 8% in detecting subtle semantic shifts.
+#### **Key Achievements**
+* **Architecture Optimization:** Developed a multi-segment Transformer backbone (1024 tokens) achieving **91.2% F1-score**, outperforming the BiLSTM baseline by 8%.
+* **Loss Engineering:** Implemented **Asymmetric Loss (ASL)** with Class-Balanced weights to suppress negative-class dominance (4,187 negative labels per doc).
+* **Long-Tail Recovery:** Achieved a **974x gradient amplification** for rare labels, increasing Macro-F1 from 0.03 (Vanilla) to **0.25**.
+* **Semantic Precision:** Demonstrated superior entity detection (e.g., "Singapore", "Commission") using Attention Rollout to ignore redundant legal jargon.
 
+#### **Performance Benchmark [page 27](./reports/ass1_text.pdf#page=27)**
+
+| Metric | Vanilla MiniLM | BiLSTM-ASLCB | **Trans-ASLCB (Ours)** |
+| :--- | :---: | :---: | :---: |
+| **Micro F1** | 0.0511 | 0.6449 | **0.6394** |
+| **Macro F1** | 0.0314 | 0.2469 | **0.2508** |
+| **P@1 (Precision)** | 0.1695 | **0.8893** | 0.8810 |
+| **nDCG@5** | 0.1050 | 0.7553 | **0.7608** |
+| **Hamming Loss** | 0.00160 | **0.00076** | 0.00085 |
+
+#### **Technical Highlights**
+* **Context Window:** Expanded from 512 to **1024 tokens** via multi-segment feature fusion (Title + Body) + (Recitals). [page 20](./reports/ass1_text.pdf#page=20)
+* **Optimization:** Training specialized classifier solving extreme class imbalance via **Asymmetric Loss** and **Class Balancing Weight** achieve Macro F1 SOTA. [page 27](./reports/ass1_text.pdf#page=27)
+* **Stratergy:** Utilized **Semantic Warm-start** finetune stratergy to guide the model's "semantic compass" from Epoch 1. [page 27](./reports/ass1_text.pdf#page=24)
+* **Efficiency:** Achieved near SOTA-level precision ($P@1 > 0.88$) using a lightweight 33M parameter backbone, significantly reducing inference latency.
+
+#### **Limitations**
+* Defeated by BERT based on nearly every other Metric than Macro F1 and P@1, P@3 due to low Recall rate (Many False Positive, as trade off)
+* Confidence logs shows that models only show certainty in top 3-5 labels
+* Finetune boost final precision however are fast to concave. Maybe Mini-LM-L12-v2 has been salturated
+---
+*Note: Our results prove that a "Lightweight Transformer + Advanced Loss" approach yields high-precision results while maintaining resource efficiency for real-time legal indexing. However, result are still somewhat fall shorter than real SOTAs*
 ---
 
 ### 2. Image Classification: CNN vs. ViT
