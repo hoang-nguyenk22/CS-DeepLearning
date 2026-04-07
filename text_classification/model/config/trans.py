@@ -5,7 +5,9 @@ class Trans_config:
     typ = "max"
     head = "l3"
     loss = "aslcb"
-    path = f'model/weight/eurlex/trans_{loss}{f"_{typ}" if typ and typ == "lwa" else ""}_{head}_best.pt'
+
+    name = f"trans_{loss}{f"_{typ}" if typ and typ == "lwa" else ""}_{head}_best.pt"
+    path = f'model/weight/eurlex/{name}'
     epochs=30
     
     thres= 0.7
@@ -20,4 +22,4 @@ trans_aslcb = train_transformer(trans_aslcb, train_loader, test_loader, mlb, dev
                           acc_steps=4, # accumulation means a batch is technically 16* 4 = 64 
                           criterion=crit_aslcb, # ASL-CB eliminating negative class dominance and focus on positive samples, with class-balanced weights to further avoid head bias
                           name="trans_aslcb")
-                          """
+"""

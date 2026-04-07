@@ -11,6 +11,8 @@ from model.lstm import BiLSTM
 from model.trans import Trans
 from model.embedding import EmbeddingExtractor
 
+import joblib
+from huggingface_hub import hf_hub_download
 from torch.amp import autocast
 from eda.preprocess import clean, clean_legal
 
@@ -19,11 +21,17 @@ class InferenceEngine:
     def __init__(self, device=None, dataset= "eurlex"):
         self.device = device if device else torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         if dataset == "cs":
-             self.mlb, self.num_classes = get_mlb()
+             self.mlb = hf_hub_download(repo_id="TungDKS/XMC", filename="mlb.pktl")
+             self.mlb = joblib.load(self.mlb)
+             self.num_classes = len(self.mlb.classes_)
              self.mlb_lstm = self.mlb
         else:
-            self.mlb, self.num_classes = get_mlb("data/eurlex/mlb.pktl")
-            self.mlb_lstm, self.n_lstm = get_mlb("data/eurlex/mlb_lstm.pkl")
+            self.mlb = hf_hub_download(repo_id="TungDKS/XMC", filename="mlb.pktl")
+            self.mlb = joblib.load(self.mlb)
+            self.num_classes = len(self.mlb.classes_)
+            self.mlb_lstm = hf_hub_download(repo_id="TungDKS/XMC", filename="mlb_lstm.pkl")
+            self.mlb_lstm = joblib.load(self.mlb_lstm)
+            self.n_lstm = len(self.mlb_lstm.classes_)
         
         self.trans_conf = Trans_config()
         self.lstm_conf = LSTM_config()
@@ -48,7 +56,9 @@ class InferenceEngine:
     def _init_lstm(self):
         model = BiLSTM(input_dim=self.emb_conf.dim, hidden_dim=self.lstm_conf.hidden_dim)
         model.add_head('l3',self.n_lstm )
-        checkpoint = torch.load(self.lstm_conf.path, map_location=self.device, weights_only=False)
+
+        weight_path = hf_hub_download(repo_id="TungDKS/XMC", filename=self.lstm_conf.name)
+        checkpoint = torch.load(weight_path, map_location=self.device, weights_only=False)
         model.load_state_dict(checkpoint['model_state'] if isinstance(checkpoint, dict) and 'model_state' in checkpoint else checkpoint)
         thres = checkpoint.get('best_threshold', self.lstm_conf.thres) if isinstance(checkpoint, dict) else self.lstm_conf.thres
         return model.to(self.device).eval(), thres
@@ -56,7 +66,8 @@ class InferenceEngine:
     def _init_trans(self):
         model = Trans(model_name=self.emb_conf.model_name, device=self.device)
         model.add_head(name='l3', head_type=self.trans_conf.typ, num_labels=self.num_classes)
-        thres = model.load_checkpoint(self.trans_conf.path)
+        weight_path = hf_hub_download(repo_id="TungDKS/XMC", filename=self.trans_conf.name)
+        thres = model.load_checkpoint(weight_path)
         return model.eval(), thres
 
     def _prepare_trans_input(self, data: Union[Dict, str]):
