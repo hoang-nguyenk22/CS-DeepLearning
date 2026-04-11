@@ -25,7 +25,11 @@ Under the instruction of **Dr. Lê Thành Sách**, our group explored advanced D
 
 ### 1. Extreme Multi-Label Text Classification: BiLSTM vs. Transformer
 **Author:** Vũ Hoàng Tùng  
+
 **Full Report:** [Report on Text Classification.pdf](./reports/ass1_text.pdf)
+
+**Live Demo:** [Link](./tc_demo.md)
+
 
 #### **Abstract**
 Classifying long-form documents within a high-dimensional label space ($10^3$–$10^6$) has been always a formiddable challenge, yet has been needed for solution more than ever, due to the non-stop accumulation of documents, papers of complex domain with many topic overlap. As such a field called XMC. This study benchmarks **BiLSTM-Attention** and **Transformer-based Encoders** on their ability to handle semantic overlap and document length in the **Eurlex57k** dataset.

@@ -59,7 +59,7 @@ def text_classifier():
     engine= load_engine()
     mapping_dict = load_label_mapping("eurlex")
 
-    st.title("🚀 Odoc: Document Tagger")
+    st.title("🔍 Odoc: Document Tagger")
     st.markdown("Automated Multi-label Classification for Legal & ComputerScience Documents")
 
     with st.sidebar:

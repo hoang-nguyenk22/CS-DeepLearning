@@ -15,6 +15,6 @@
 This landing page provides abstract, reports and implementations of assigments in the Deep Learning Course of HCMUT. 
 
 ### Assignments
-* **[Assignment 1: Image, Text, and Multimodal Classification](./assignment1)**
-* **[Assignment 2: ](./assignment2)**
-* **[Assignment 3: ](./assignment2)**
+* **[Assignment 1: Image, Text, and Multimodal Classification](./ass1/gitpages/assignment1)**
+* **[Assignment 2: ](./gitpages/assignment2)**
+* **[Assignment 3: ](./gitpages/assignment2)**
