@@ -57,13 +57,14 @@ class InferenceEngine:
                 self.mlb_lstm = hf_hub_download(repo_id="TungDKS/XMC", filename="mlb_lstm.pkl")
                 self.mlb_lstm = joblib.load(self.mlb_lstm)
                 self.n_lstm = len(self.mlb_lstm.classes_)
+                self.lstm_to_trans_map = self._build_label_mapping()
         
         self.trans_conf = trans_eurlex_conf if dataset == "eurlex" else trans_cs_conf
         self.lstm_conf = lstm_cs_conf if dataset == "cs" else lstm_eurlex_conf
         self.emb_conf = emb_cs if dataset == "cs" else emb_eur 
         
         self.prep_func = clean if dataset == "cs" else clean_legal 
-        self.lstm_to_trans_map = self._build_label_mapping()
+        
 
         self.tokenizer = AutoTokenizer.from_pretrained(self.emb_conf.model_name)
         self.extractor = EmbeddingExtractor(device=self.device)
@@ -176,7 +177,8 @@ class InferenceEngine:
         res_lstm = self.predict(data, model_type='lstm', thres=0)
         
         aligned_lstm_probs = np.zeros(self.num_classes)
-        aligned_lstm_probs[self.lstm_to_trans_map] = res_lstm['probs_raw']
+        if self.dataset:
+            aligned_lstm_probs[self.lstm_to_trans_map] = res_lstm['probs_raw']
         
         combined_probs = (w_trans * res_trans['probs_raw']) + ((1 - w_trans) * aligned_lstm_probs)
         
