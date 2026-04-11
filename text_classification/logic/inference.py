@@ -3,9 +3,13 @@ import torch.nn as nn
 import numpy as np
 import time
 from transformers import AutoTokenizer
-from model.config.lstm import LSTM_config
-from model.config.trans import Trans_config
-from model.config.emb import Emb_conf
+
+
+from model.config.lstm import lstm_cs_conf, lstm_eurlex_conf
+from model.config.trans import trans_cs_conf, trans_eurlex_conf
+
+
+from model.config.emb import emb_eur, emb_cs
 from loader.lb_prep import get_mlb
 from model.lstm import BiLSTM
 from model.trans import Trans
@@ -17,12 +21,29 @@ from torch.amp import autocast
 from eda.preprocess import clean, clean_legal
 
 from typing import Dict, Union
+
+import os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+project_root = os.path.dirname(current_dir)
+
+def get_resource_path(relative_path):
+    return os.path.join(project_root, relative_path)
+
+    return os.path.join(base_path, relative_path)
 class InferenceEngine:
     def __init__(self, device=None, dataset= "eurlex", local=False):
         self.device = device if device else torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+        self.dataset = dataset
+      
         if local:
-            self.mlb , self.num_classes= get_mlb(f'data/{dataset}/mlb.{"pktl" if dataset == "eurlex" else "pkl"}')
-            self.mlb_lstm, self.n_lstm = get_mlb()
+            path = get_resource_path(f'data/{dataset}/mlb.{"pktl" if dataset == "eurlex" else "pkl"}')
+            self.mlb , self.num_classes= get_mlb(path)
+            if dataset != "cs":
+                self.mlb_lstm, self.n_lstm = get_mlb(get_resource_path(f'data/{dataset}/mlb_lstm.pkl'))
+            else:
+                self.mlb_lstm, self.n_lstm = self.mlb, self.num_classes
         else:
             if dataset == "cs":
                 self.mlb = hf_hub_download(repo_id="TungDKS/XMC", filename="mlb.pktl")
@@ -37,11 +58,11 @@ class InferenceEngine:
                 self.mlb_lstm = joblib.load(self.mlb_lstm)
                 self.n_lstm = len(self.mlb_lstm.classes_)
         
-        self.trans_conf = Trans_config()
-        self.lstm_conf = LSTM_config()
-        self.emb_conf = Emb_conf()
+        self.trans_conf = trans_eurlex_conf if dataset == "eurlex" else trans_cs_conf
+        self.lstm_conf = lstm_cs_conf if dataset == "cs" else lstm_eurlex_conf
+        self.emb_conf = emb_cs if dataset == "cs" else emb_eur 
         
-
+        self.prep_func = clean if dataset == "cs" else clean_legal 
         self.lstm_to_trans_map = self._build_label_mapping()
 
         self.tokenizer = AutoTokenizer.from_pretrained(self.emb_conf.model_name)
@@ -60,8 +81,10 @@ class InferenceEngine:
     def _init_lstm(self):
         model = BiLSTM(input_dim=self.emb_conf.dim, hidden_dim=self.lstm_conf.hidden_dim)
         model.add_head('l3',self.n_lstm )
-
-        weight_path = hf_hub_download(repo_id="TungDKS/XMC", filename=self.lstm_conf.name)
+        try:
+            weight_path = get_resource_path(self.lstm_conf.path)
+        except:
+            weight_path = hf_hub_download(repo_id="TungDKS/XMC", filename=self.lstm_conf.name)
         checkpoint = torch.load(weight_path, map_location=self.device, weights_only=False)
         model.load_state_dict(checkpoint['model_state'] if isinstance(checkpoint, dict) and 'model_state' in checkpoint else checkpoint)
         thres = checkpoint.get('best_threshold', self.lstm_conf.thres) if isinstance(checkpoint, dict) else self.lstm_conf.thres
@@ -70,7 +93,10 @@ class InferenceEngine:
     def _init_trans(self):
         model = Trans(model_name=self.emb_conf.model_name, device=self.device)
         model.add_head(name='l3', head_type=self.trans_conf.typ, num_labels=self.num_classes)
-        weight_path = hf_hub_download(repo_id="TungDKS/XMC", filename=self.trans_conf.name)
+        try:
+            weight_path = get_resource_path(self.trans_conf.path)
+        except:
+            weight_path = hf_hub_download(repo_id="TungDKS/XMC", filename=self.trans_conf.name)
         thres = model.load_checkpoint(weight_path)
         return model.eval(), thres
 
@@ -80,15 +106,17 @@ class InferenceEngine:
             c2 = ""
         else:
             c1 = f"{data.get('title', '')} [SEP] {data.get('main_body', '')}"
-            c2 = f"{data.get('recitals', '')}"
+            c2 = data.get('recitals', None)
 
         enc1 = self.tokenizer(c1, padding='max_length', truncation=True, max_length=512, return_tensors='pt').to(self.device)
-        enc2 = self.tokenizer(c2, padding='max_length', truncation=True, max_length=512, return_tensors='pt').to(self.device) 
+        enc2 = self.tokenizer(c2, padding='max_length', truncation=True, max_length=512, return_tensors='pt').to(self.device) if c2 else None
         
-        return [
-            (enc1['input_ids'], enc1['attention_mask']),
-            (enc2['input_ids'], enc2['attention_mask']) 
+        inp =  [
+            (enc1['input_ids'], enc1['attention_mask'])            
         ]
+        if enc2:
+            inp.append((enc2['input_ids'], enc1['attention_mask']))
+        return inp
 
     def predict(self, data, model_type='trans', thres=None):
         start_time = time.time()
@@ -102,15 +130,20 @@ class InferenceEngine:
             current_mlb = self.mlb
             current_num_classes = self.num_classes
 
-        data['title'] = clean_legal(data.get('title', ''))
-        data['main_body'] = clean_legal(data.get('main_body', ''))
-        data['recitals'] = clean_legal(data.get('recitals', ''))
+        data['title'] = self.prep_func(data.get('title', ''))
+        data['main_body'] = self.prep_func(data.get('main_body', ''))
+        data['recitals'] = self.prep_func(data.get('recitals', '')) if self.dataset == "eurlex" else None
+        full_text = f"{data.get('title', '')} {data.get('main_body', '')}{data.get('recitals', '')}"
 
+
+        print(f"Title: {data.get('title', '')}")
+        print(f"Body: {data.get('main_body', '')}")
         with torch.no_grad():
             if model_type == 'lstm':
-                full_text = f"{data.get('title', '')} {data.get('main_body', '')} {data.get('recitals', '')}"
+                
                 emb = self.extractor.get_embeddings(full_text)
                 emb = emb.unsqueeze(0).unsqueeze(0) if emb.dim() == 1 else emb.unsqueeze(1)
+                print(full_text)
                 out = self.model_lstm(emb.float().to(self.device))
             else:
                 trans_input = self._prepare_trans_input(data)

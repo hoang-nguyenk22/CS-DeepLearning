@@ -35,8 +35,11 @@ def filter_tags(df, ratio=0.001, filter=None):
 
 def clean(text):
     text = re.sub(r'<code>(.*?)</code>', r' [CODE_START] \1 [CODE_END] ', str(text), flags=re.DOTALL)
+    text = re.sub(r'<*>(.*?)</*>',"", str(text), flags=re.DOTALL)
     text = re.sub(r'<.*?>', '', text)
     return re.sub(r'\s+', ' ', text).strip()
+
+
 import re
 import unicodedata
 import ast
@@ -58,13 +61,13 @@ def clean_legal(text):
 
     text = str(text)
     
-    # Strip HTML tags (If yes)
+    # Strip HTML tags 
     text = re.sub(r'<.*?>', ' ', text)
     
     # 3. Unicode Normalization (NFC)
     text = unicodedata.normalize('NFC', text)
     
-    # 4. Remove Footnotes [1], [2] or (1), (2)
+    # 4. Remove Footnotes
 
     text = re.sub(r'\[\s*\d+\s*\]', ' ', text)
     text = re.sub(r'\(\s*\d+\s*\)', ' ', text)

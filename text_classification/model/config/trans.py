@@ -1,25 +1,31 @@
 import torch
 
+import torch
+from model.config.emb import Emb_conf
+from dataclasses import dataclass
+
+
+
 class Trans_config:
-    dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    typ = "max"
-    head = "l3"
-    loss = "aslcb"
+    def __init__(self, dataset="eurlex"):
+        self.dataset = dataset
+        self.dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        
+        self.head = "l3"
+        self.loss = "aslcb"
+        self.epochs = 30
+        
+        if dataset == "eurlex":
+            self.typ = "max"
+            self.name = f"trans_{self.loss}{'_lwa' if self.typ == 'lwa' else ''}_{self.head}_best.pt"
+            self.thres = 0.55
+        else:
+            self.typ = "lwa"
+            self.name = f"trans_lwa_{self.head}_best.pt"
+            self.thres = 0.65
+            
+        self.path = f'model/weight/{dataset}/{self.name}'
 
-    name = f"trans_{loss}{f"_{typ}" if typ and typ == "lwa" else ""}_{head}_best.pt"
-    path = f'model/weight/eurlex/{name}'
-    epochs=30
-    
-    thres= 0.7
-
-
-"""
-    
-trans_aslcb = train_transformer(trans_aslcb, train_loader, test_loader, mlb, dev, 
-                          epochs=40, 
-                          head_name='l3', # Flat label no hierarchy 
-                          train_with_wu=True, # Maximum 8 warm up epochs, then unfreeze the backbone (number 8 is just simply conclusion of our empirical experiments, feel free to adjust it)
-                          acc_steps=4, # accumulation means a batch is technically 16* 4 = 64 
-                          criterion=crit_aslcb, # ASL-CB eliminating negative class dominance and focus on positive samples, with class-balanced weights to further avoid head bias
-                          name="trans_aslcb")
-"""
+# --- TẠO INSTANCE ---
+trans_eurlex_conf = Trans_config(dataset="eurlex", )
+trans_cs_conf = Trans_config(dataset="cs")
