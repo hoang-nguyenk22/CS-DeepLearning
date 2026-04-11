@@ -17,7 +17,7 @@ def load_label_mapping(ds = "eurlex"):
     except:
         path = hf_hub_download(repo_id="TungDKS/XMC", filename="train_labels.csv")
         label = pd.read_csv(path)
-        mapping = dict(zip(label['id'].astype(str), label['title']))
+        mapping = dict(zip(label['concept_id'].astype(str), label['title']))
     return mapping
         
     
