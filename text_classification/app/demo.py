@@ -85,7 +85,6 @@ def text_classifier():
     if run_btn:
         data = {"title": title, "main_body": body, "recitals": recitals}
         
-        eurlex_mapping = load_eurlex_mapping()
 
         with st.spinner("Processing..."):
             if model_choice == "ensemble":
@@ -104,7 +103,7 @@ def text_classifier():
                 for lid in res['labels']:
                     str_id = str(int(lid))
                     if data_choice == "eurlex":
-                        label_text = eurlex_mapping.get(str_id, "Unknown")
+                        label_text = mapping_dict.get(str_id, "Unknown")
                         readable_labels.append(f"{label_text} ({str_id})")
                     else:
                         readable_labels.append(str_id)
