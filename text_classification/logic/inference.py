@@ -83,10 +83,11 @@ class InferenceEngine:
     def _init_lstm(self):
         model = BiLSTM(input_dim=self.emb_conf.dim, hidden_dim=self.lstm_conf.hidden_dim)
         model.add_head('l3',self.n_lstm )
-        try:
-            weight_path = get_resource_path(self.lstm_conf.path)
-        except:
+        
+        weight_path = get_resource_path(self.lstm_conf.path)
+        if not os.path.exists(weight_path):
             weight_path = hf_hub_download(repo_id="TungDKS/XMC", filename=self.lstm_conf.name)
+
         checkpoint = torch.load(weight_path, map_location=self.device, weights_only=False)
         model.load_state_dict(checkpoint['model_state'] if isinstance(checkpoint, dict) and 'model_state' in checkpoint else checkpoint)
         thres = checkpoint.get('best_threshold', self.lstm_conf.thres) if isinstance(checkpoint, dict) else self.lstm_conf.thres
@@ -95,9 +96,8 @@ class InferenceEngine:
     def _init_trans(self):
         model = Trans(model_name=self.emb_conf.model_name, device=self.device)
         model.add_head(name='l3', head_type=self.trans_conf.typ, num_labels=self.num_classes)
-        try:
-            weight_path = get_resource_path(self.trans_conf.path)
-        except:
+        weight_path = get_resource_path(self.trans_conf.path)
+        if not os.path.exists(weight_path): 
             weight_path = hf_hub_download(repo_id="TungDKS/XMC", filename=self.trans_conf.name)
         thres = model.load_checkpoint(weight_path)
         return model.eval(), thres
