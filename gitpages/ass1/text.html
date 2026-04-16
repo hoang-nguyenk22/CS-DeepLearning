@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Classification | Deep Dive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        
+        html { scroll-behavior: smooth; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #f0f9ff; /* Sky Blue Light */
+            color: #1e293b; 
+        }
+
+        /* --- NATIVE MARKDOWN STYLE --- */
+        .md-view h1 { font-size: 2.8rem; font-weight: 800; color: #0c4a6e; margin-bottom: 1.5rem; }
+        .md-view h2 { font-size: 1.8rem; font-weight: 700; color: #0369a1; border-bottom: 2px solid #bae6fd; padding-bottom: 0.5rem; margin-top: 4rem; margin-bottom: 1.5rem; }
+        .md-view h3 { font-size: 1.4rem; font-weight: 700; color: #0c4a6e; margin-top: 2.5rem; margin-bottom: 1rem; }
+        .md-view h4 { font-size: 1.15rem; font-weight: 700; color: #0284c7; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+        .md-view p { line-height: 1.8; margin-bottom: 1.2rem; text-align: justify; }
+        .md-view ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; }
+        .md-view li { margin-bottom: 0.6rem; }
+        .md-view b, .md-view strong { color: #0c4a6e; font-weight: 700; }
+
+        /* TABLE STYLING */
+        .table-wrapper { overflow-x: auto; margin: 2rem 0; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        .md-view table { width: 100%; border-collapse: collapse; background: white; }
+        .md-view th, .md-view td { padding: 0.85rem; border: 1px solid #e2e8f0; text-align: left; font-size: 0.85rem; }
+        .md-view th { background: #f8fafc; font-weight: bold; color: #0c4a6e; text-align: center; }
+        .highlight-row { background-color: #f0f9ff !important; font-weight: 600; }
+
+        /* --- IFRAME STYLING --- */
+        .iframe-container { width: 100%; height: 800px; border-radius: 2rem; overflow: hidden; border: 2px solid #bae6fd; background: white; margin: 2rem 0; }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* --- QUICK NAV (Floating) --- */
+        .quick-nav { position: fixed; right: 2rem; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 1rem; z-index: 100; }
+        .nav-dot { width: 3.5rem; height: 3.5rem; background: #0ea5e9; color: white; border-radius: 50%; display: flex; align-items: center; justify-center; box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3); transition: all 0.3s; }
+        .nav-dot:hover { transform: scale(1.1); background: #0284c7; }
+        .nav-dot span { position: absolute; right: 4.5rem; background: #0c4a6e; color: white; padding: 0.4rem 1rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: bold; opacity: 0; pointer-events: none; transition: 0.3s; white-space: nowrap; }
+        .nav-dot:hover span { opacity: 1; }
+        
+        .pdf-link { color: #0284c7; text-decoration: underline; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="quick-nav hidden lg:flex">
+        <a href="#summary" class="nav-dot flex items-center justify-center"><i class="fas fa-file-alt"></i><span>Summary</span></a>
+        <a href="#demo" class="nav-dot flex items-center justify-center"><i class="fas fa-play"></i><span>Live Demo</span></a>
+        <a href="#eda" class="nav-dot flex items-center justify-center"><i class="fas fa-chart-bar"></i><span>EDA Analysis</span></a>
+        <a href="#" class="nav-dot flex items-center justify-center" style="background: #64748b;"><i class="fas fa-arrow-up"></i><span>Top</span></a>
+    </div>
+
+    <div class="max-w-[1000px] mx-auto px-6 py-16">
+        <div class="md-view">
+            <a href="./assignment1.html" style="text-decoration:none" class="text-sky-600 font-bold text-xs uppercase tracking-widest hover:underline">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Module Dashboard
+            </a>
+
+            <h1 class="mt-8">Text Classification: <span class="text-sky-500">Odoc Tagger</span></h1>
+
+            <section id="summary">
+                <h2>🏆 Project Summaries & Achievements</h2>
+                
+                <p><b>Author:</b> Vũ Hoàng Tùng</p>
+                <p><b>Full Report:</b> <a href="../../reports/ass1_text.pdf" target="_blank" rel="noopener noreferrer" class="pdf-link">Report on Text Classification.pdf</a></p>
+
+                <h4>Abstract</h4>
+                <p>Classifying long-form documents within a high-dimensional label space (10^3–10^6) has been always a formiddable challenge, yet has been needed for solution more than ever, due to the non-stop accumulation of documents, papers of complex domain with many topic overlap. As such a field called XMC. This study benchmarks <b>BiLSTM-Attention</b> and <b>Transformer-based Encoders</b> on their ability to handle semantic overlap and document length in the <b>Eurlex57k</b> dataset.</p>
+
+                <h4>Key Achievements</h4>
+                <ul>
+                    <li><b>Pipeline Design:</b> Developed a multi-segment Transformer backbone (1024 tokens), expanding context window for long legal documents.</li>
+                    <li><b>Deep Learning Application:</b> Combining finetuning with ultilized classification head training, increasing Macro-F1 from 0.03 (Vanilla) to <b>0.25</b>. <a href="../../reports/ass1_text.pdf#page=27" target="_blank" rel="noopener noreferrer" class="pdf-link">page 27</a></li>
+                    <li><b>Semantic Precision:</b> Demonstrated superior entity detection (e.g., “Singapore”, “Commission”, "Commitee") using Attention Rollout to ignore redundant legal jargon.<a href="../../reports/ass1_text.pdf#page=28" target="_blank" rel="noopener noreferrer" class="pdf-link">page 28</a></li>
+                </ul>
+
+                <h4>Methodology and Technical Highlights</h4>
+                <ul>
+                    <li><b>Context Window:</b> Expanded from 512 to <b>1024 tokens</b> via multi-segment feature fusion (Title + Body) + (Recitals). <a href="../../reports/ass1_text.pdf#page=20" target="_blank" rel="noopener noreferrer" class="pdf-link">page 20</a></li>
+                    <li><b>Loss Engineering:</b> Implemented <b>Asymmetric Loss (ASL)</b> to suppress negative-class dominance (4,187 negative labels per doc). <a href="../../reports/ass1_text.pdf#page=22" target="_blank" rel="noopener noreferrer" class="pdf-link">page 22</a></li>
+                    <li><b>Long-Tail Recovery:</b> Apply <b>Weight balancing</b> for rare labels (Consist of < 0.001 %) <a href="../../reports/ass1_text.pdf#page=22" target="_blank" rel="noopener noreferrer" class="pdf-link">page 22</a></li>
+                    <li><b>Training Strategy:</b> Utilized <b>Semantic Warm-start</b> finetune strategy to guide the model’s “semantic compass” from Epoch 1. <a href="../../reports/ass1_text.pdf#page=24" target="_blank" rel="noopener noreferrer" class="pdf-link">page 24</a></li>
+                    <li><b>Efficiency:</b> Achieved near SOTA-level precision ($P@1 > 0.88$) using a lightweight 33M parameter backbone, significantly reducing inference latency.<a href="../../reports/ass1_text.pdf#page=27" target="_blank" rel="noopener noreferrer" class="pdf-link">page 27</a></li>
+                </ul>
+
+                <h4>Performance Benchmark <a href="../../reports/ass1_text.pdf#page=27" target="_blank" rel="noopener noreferrer" class="pdf-link">[page 27]</a></h4>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>Micro F1</th>
+                                <th>Macro F1</th>
+                                <th>P@1</th>
+                                <th>R@1</th>
+                                <th>nDCG@5</th>
+                                <th>Hamming</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>RoBERTa* (SOTA)</td><td>0.6850</td><td>0.2200</td><td>0.9220</td><td>0.2100</td><td>0.8230</td><td>--</td></tr>
+                            <tr><td>BIGRU-LWAN (L2V)</td><td>0.6120</td><td>0.1850</td><td>0.9130</td><td>0.1980</td><td>0.8040</td><td>--</td></tr>
+                            <tr><td>HAN</td><td>0.5840</td><td>0.1420</td><td>0.8940</td><td>0.1820</td><td>0.7780</td><td>--</td></tr>
+                            <tr class="highlight-row"><td>Vanilla MiniLM (Base)</td><td>0.0511</td><td>0.0314</td><td>0.1695</td><td>0.0347</td><td>0.1050</td><td>0.00160</td></tr>
+                            <tr class="highlight-row"><td>BiLSTM-ASLCB (Ours)</td><td>0.6449</td><td>0.2469</td><td>0.8893</td><td>0.2026</td><td>0.7553</td><td>0.00076</td></tr>
+                            <tr class="highlight-row"><td>Trans-ASLCB (Ours)</td><td>0.6394</td><td>0.2508</td><td>0.8810</td><td>0.2002</td><td>0.7608</td><td>0.00085</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>Limitations</h4>
+                <ul>
+                    <li>Defeated by RoBERTa (upon trained it uploaded as LegalBERT) on nearly every other Metric than Macro F1 and P@3 due to lower Recall rate (we likely need to moderate weights better).</li>
+                    <li>Confidence logs shows that models only show certainty in top 3-5 labels.</li>
+                    <li>Finetune boost final precision strongly however are fast to concave. Maybe Mini-LM-L12-v2 has been salturated upon too many epoch. We fix this by dynamic training stratergy, however requires many epochs for head to adapt</li>
+                </ul>
+
+                <p class="italic text-sm text-slate-500 mt-8">
+                    *Note: Our results prove that a "Lightweight Transformer + Advanced Loss" approach still yields high-precision results while maintaining resource efficiency.
+                </p>
+            </section>
+
+            <section id="demo" class="mt-24">
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-sky-900 m-0 border-none p-0">Live Demo</h2>
+                </div>
+
+                <div class="mb-16">
+                    <h4 class="text-sky-600 font-bold mb-4 uppercase tracking-widest text-xs italic">
+                        <i class="fas fa-terminal mr-2"></i> Live Inference App
+                    </h4>
+                    <div class="max-w-4xl mx-auto shadow-2xl shadow-sky-200/50 rounded-[2rem] overflow-hidden border-2 border-sky-100 bg-white">
+                        <div class="relative w-full" style="height: 600px;">
+                            <iframe 
+                                src="https://odoctagger-v1.streamlit.app/?embed=true" 
+                                class="absolute top-0 left-0 w-full h-full border-none"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                    </div>
+                    <p class="text-center text-slate-400 text-[11px] mt-4 italic">
+                        Note: The model might take a few seconds to warm up on the cloud server.
+                    </p>
+                </div>
+
+                <div class="bg-white/50 p-8 rounded-[2.5rem] border border-sky-100 backdrop-blur-sm">
+                    <h4 class="text-sky-600 font-bold mb-4 uppercase tracking-widest text-xs italic">
+                        <i class="fas fa-eye mr-2"></i> On-the-fry Analysis 
+                    </h4>
+                    <p class="text-slate-600 leading-relaxed mb-8">
+                        For Transformer, we provide visualization using <b>Attention Rollout</b>. Basically, the gradient of the final layer will be taken and plotted with mapped tokens to show significant tokens within provided texts, allowing us to understand the model's "internal compass."
+                    </p>
+
+                    <figure class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                        <div class="overflow-hidden rounded-xl">
+                            <img src="../../reports/img/att_r.png" alt="Attention Rollout Visualization" class="w-full h-auto hover:scale-[1.01] transition-transform duration-500">
+                        </div>
+                        <figcaption class="text-center text-slate-500 text-sm mt-4 font-medium italic">
+                            <b>Figure 1:</b> Attention Roll_out. The redder the colour, the more focused the model on that token.
+                        </figcaption>
+                    </figure>
+                    <p class="text-slate-600 leading-relaxed mb-8">
+                        This analysis proves that model are capable to focus more on entities like <b>Singapore</b> and <b>commission</b> (shown as red), while ignoring dates, numbers or grammar word (shown as white), however both attention rollout and weight shows that model is not confident when there are more than 3 tags"
+                    </p>
+
+                </div>
+            </section>
+
+            <section id="eda" class="mt-32 pb-20">
+                <h2>📊 Exploratory Data Analysis (EDA)</h2>
+                <p>Exploratory Data Analysis on Eurlex57k...</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                    <div class="bg-white p-6 rounded-3xl border border-sky-100 shadow-sm">
+                        <p class="text-xs font-bold text-sky-500 uppercase mb-4">Label Distribution</p>
+                        <div class="aspect-video bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 italic">
+                            [Insert Label Distribution Chart]
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-3xl border border-sky-100 shadow-sm">
+                        <p class="text-xs font-bold text-sky-500 uppercase mb-4">Sequence Length</p>
+                        <div class="aspect-video bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 italic">
+                            [Insert Sequence Length Chart]
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <footer class="text-center py-10 text-sky-300 text-xs font-bold border-t border-sky-100">
+        &copy; 2026 HCMUT Deep Learning Team • Vũ Hoàng Tùng
+    </footer>
+
+</body>
+</html>

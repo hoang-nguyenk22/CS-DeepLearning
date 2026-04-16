@@ -65,7 +65,7 @@ def text_classifier():
     with st.sidebar:
         st.header("Settings")
         model_choice = st.selectbox("Select Model", ["trans", "lstm", "ensemble"])
-        data_choice = st.selectbox("Select Data", ["cs", "eurlex"])
+        data_choice = st.selectbox("Select Data", ["eurlex", "cs"])
         threshold = st.slider("Threshold", 0.1, 0.9, 0.3, 0.05)
         if model_choice == "ensemble":
             w_trans = st.slider("Weight Transformer", 0.0, 1.0, 0.7, 0.1)

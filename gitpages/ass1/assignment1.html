@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment 1 | Deep Learning Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0f9ff; color: #1e293b; scroll-behavior: smooth; }
+        
+        /* CẤU TRÚC CARD MÔ-ĐUN LỚN */
+        .module-card {
+            background: white;
+            border-radius: 2.5rem;
+            padding: 2.5rem;
+            box-shadow: 0 20px 50px rgba(14, 165, 233, 0.1);
+            border: 1px solid #e0f2fe;
+            margin-top: 3rem;
+        }
+
+        /* 4 Ô VUÔNG ĐIỀU HƯỚNG BÊN TRONG */
+        .nav-square {
+            background: #0ea5e9; /* Màu Sky Blue của ông */
+            aspect-ratio: 1 / 1;
+            border-radius: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            padding: 1rem;
+        }
+        .nav-square:hover {
+            transform: translateY(-5px) scale(1.03);
+            background: #0284c7;
+            box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3);
+        }
+        .nav-square i { font-size: 2rem; margin-bottom: 0.5rem; }
+        .nav-square span { font-weight: 800; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        /* GIỮ NGUYÊN STYLE BẢNG CỦA ÔNG */
+        .table-wrapper { overflow-x: auto; margin: 2rem 0; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { padding: 0.85rem; border: 1px solid #e2e8f0; text-align: left; font-size: 0.85rem; }
+        th { background: #f8fafc; font-weight: bold; color: #0c4a6e; text-align: center; }
+    </style>
+</head>
+<body class="py-12 px-6">
+
+    <div class="max-w-[1200px] mx-auto">
+        
+        <a href="../../index.html" style="text-decoration:none" class="text-sky-600 font-bold text-xs uppercase tracking-widest">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Home
+        </a>
+        
+        <h1 class="text-5xl font-extrabold text-[#0c4a6e] mt-8 mb-6 uppercase tracking-tight">Assignment 1: Deep Learning Suite</h1>
+
+        <h2 class="text-2xl font-bold text-[#0369a1] mb-4">👥 Team Members & Responsibilities</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 5%">No.</th>
+                        <th>Full Name</th>
+                        <th>Student ID</th>
+                        <th>Task Responsibility</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td style="text-align:center">1</td><td><b>Vũ Hoàng Tùng</b></td><td>2252886</td><td><b>Text Classification</b> (RNN vs Transformer)</td></tr>
+                    <tr><td style="text-align:center">2</td><td><b>Vũ Minh Quân</b></td><td>[ID]</td><td><b>Image Classification</b> (CNN vs ViT)</td></tr>
+                    <tr><td style="text-align:center">3</td><td>[Name]</td><td>[ID]</td><td><b>Multimodal</b> (Zero-shot vs Few-shot)</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="module-card">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                
+                <div class="lg:col-span-5">
+                    <span class="text-sky-500 font-black tracking-widest text-[10px] uppercase">Module 01</span>
+                    <h2 class="text-3xl font-extrabold text-slate-900 mt-2 mb-4">Extreme Multi-Label Text Classification</h2>
+                    <p class="text-slate-500 text-sm leading-relaxed">
+                        Phân tích hiệu năng giữa BiLSTM-Attention và Transformer Encoders trên tập dữ liệu luật Eurlex57k với chiến thuật xử lý mất cân bằng nhãn cực hạn.
+                    </p>
+                </div>
+
+                <div class="lg:col-span-7 grid grid-cols-2 md:grid-cols-4 gap-4">
+                    
+                    <a href="./text.html#summary" class="nav-square">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Summary</span>
+                    </a>
+
+                    <a href="./text.html#eda" class="nav-square">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>EDA</span>
+                    </a>
+
+                    <a href="https://odoctagger-v1.streamlit.app" target="_blank" class="nav-square">
+                        <i class="fas fa-play-circle"></i>
+                        <span>Live Demo</span>
+                    </a>
+
+                    <div class="nav-square bg-slate-300 opacity-60 cursor-not-allowed">
+                        <i class="fas fa-video"></i>
+                        <span class="text-[9px]">Coming Soon</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-24 text-center text-sky-300 text-[10px] font-bold uppercase tracking-[0.3em]">
+            &copy; 2026 DEEP LEARNING PORTFOLIO • HCMUT
+        </footer>
+
+    </div>
+
+</body>
+</html>

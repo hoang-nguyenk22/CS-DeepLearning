@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment 1 | Deep Learning Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0f9ff; color: #1e293b; scroll-behavior: smooth; }
+        
+        /* Ô CHỮ NHẬT XANH ĐẶC TRƯNG */
+        .sky-card { background: #0ea5e9; border-radius: 1.5rem; padding: 1.5rem; color: white; box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.3); transition: transform 0.3s ease; }
+        .sky-card:hover { transform: translateY(-5px); }
+
+        /* NATIVE MARKDOWN STYLE */
+        .md-view h1 { font-size: 2.8rem; font-weight: 800; color: #0c4a6e; margin: 2rem 0 1.5rem; }
+        .md-view h2 { font-size: 1.8rem; font-weight: 700; color: #0369a1; border-bottom: 2px solid #bae6fd; padding-bottom: 0.5rem; margin: 3rem 0 1.5rem; }
+        .md-view h3 { font-size: 1.4rem; font-weight: 700; color: #0c4a6e; margin: 2.5rem 0 1rem; }
+        .md-view h4 { font-size: 1.15rem; font-weight: 700; color: #0284c7; margin: 1.5rem 0 0.5rem; }
+        .md-view p { line-height: 1.8; margin-bottom: 1.2rem; }
+        .md-view ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; }
+        .md-view li { margin-bottom: 0.6rem; }
+        .md-view b, .md-view strong { color: #0c4a6e; font-weight: 700; }
+
+        /* TABLE STYLING - FULL WIDTH & RESPONSIVE */
+        .table-wrapper { overflow-x: auto; margin: 2rem 0; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        .md-view table { width: 100%; border-collapse: collapse; background: white; }
+        .md-view th, .md-view td { padding: 0.85rem; border: 1px solid #e2e8f0; text-align: left; font-size: 0.85rem; }
+        .md-view th { background: #f8fafc; font-weight: bold; color: #0c4a6e; text-align: center; font-size: 0.8rem; text-transform: uppercase; }
+        .md-view tr:nth-child(even) { background-color: #f9fafb; }
+        .highlight-row { background-color: #f0f9ff !important; font-weight: 600; }
+
+        .divider { border-top: 1px solid #bae6fd; margin: 3rem 0; }
+        .pdf-link { color: #0284c7; text-decoration: underline; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="max-w-[1440px] mx-auto px-8 md:px-16 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+            
+            <div class="lg:col-span-8 md-view">
+                <a href="../../index.html" style="text-decoration:none" class="text-sky-600 font-bold text-xs uppercase tracking-widest">
+                    <i class="fas fa-arrow-left mr-2"></i> Back to Home
+                </a>
+
+                <h1>Assignment 1: Deep Learning Classification Suite</h1>
+
+                <h2>👥 Team Members & Responsibilities</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 5%">No.</th>
+                                <th>Full Name</th>
+                                <th>Student ID</th>
+                                <th>Task Responsibility</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td style="text-align:center">1</td><td><b>Vũ Hoàng Tùng</b></td><td>2252886</td><td><b>Text Classification</b> (RNN vs Transformer)</td></tr>
+                            <tr><td style="text-align:center">2</td><td><b>Vũ Minh Quân</b></td><td>[ID]</td><td><b>Image Classification</b> (CNN vs ViT)</td></tr>
+                            <tr><td style="text-align:center">3</td><td>[Name]</td><td>[ID]</td><td><b>Multimodal</b> (Zero-shot vs Few-shot)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="divider"></div>
+
+                <h2>📌 Introduction</h2>
+                <p>Under the instruction of <b>Dr. Lê Thành Sách</b>, our group explored advanced Deep Learning techniques for classification across three distinct domains: Image, Text, and Multimodal data.</p>
+
+                <h3>🔗 Quick Resources</h3>
+                <ul>
+                    <li>💻 <a href="link">GitHub Source Code</a></li>
+                    <li>📄 <a href="../../reports/assignment1.pdf">Full Technical Report (PDF)</a></li>
+                </ul>
+
+                <div class="divider"></div>
+
+                <h2>🏆 Project Summaries & Achievements</h2>
+
+                <h3>1. Extreme Multi-Label Text Classification: BiLSTM vs. Transformer</h3>
+                <p><b>Author:</b> Vũ Hoàng Tùng</p>
+                <p><b>Full Report:</b> <a href="../../reports/ass1_text.pdf" class="pdf-link">Report on Text Classification.pdf</a></p>
+                <p><b>Live Demo:</b> <a href="https://odoctagger-v1.streamlit.app" class="pdf-link">Link to Demo Page</a></p>
+
+                <h4>Abstract</h4>
+                <p>Classifying long-form documents within a high-dimensional label space (10^3–10^6) has been always a formiddable challenge, yet has been needed for solution more than ever, due to the non-stop accumulation of documents, papers of complex domain with many topic overlap. As such a field called XMC. This study benchmarks <b>BiLSTM-Attention</b> and <b>Transformer-based Encoders</b> on their ability to handle semantic overlap and document length in the <b>Eurlex57k</b> dataset.</p>
+
+                <h4>Key Achievements</h4>
+                <ul>
+                    <li><b>Pipeline Design:</b> Developed a multi-segment Transformer backbone (1024 tokens), expanding context window for long legal documents.</li>
+                    <li><b>Deep Learning Application:</b> Combining finetuning with ultilized classification head training, increasing Macro-F1 from 0.03 (Vanilla) to <b>0.25</b>. <a href="../../reports/ass1_text.pdf#page=27" class="pdf-link">page 27</a></li>
+                    <li><b>Semantic Precision:</b> Demonstrated superior entity detection (e.g., “Singapore”, “Commission”, "Commitee") using Attention Rollout to ignore redundant legal jargon.<a href="../../reports/ass1_text.pdf#page=28" class="pdf-link">page 28</a></li>
+                </ul>
+
+                <h4>Methodology and Technical Highlights</h4>
+                <ul>
+                    <li><b>Context Window:</b> Expanded from 512 to <b>1024 tokens</b> via multi-segment feature fusion (Title + Body) + (Recitals). <a href="../../reports/ass1_text.pdf#page=20" class="pdf-link">page 20</a></li>
+                    <li><b>Loss Engineering:</b> Implemented <b>Asymmetric Loss (ASL)</b> to suppress negative-class dominance (4,187 negative labels per doc). <a href="../../reports/ass1_text.pdf#page=22" class="pdf-link">page 22</a></li>
+                    <li><b>Long-Tail Recovery:</b> Apply <b>Weight balancing</b> for rare labels (Consist of < 0.001 %) <a href="../../reports/ass1_text.pdf#page=22" class="pdf-link">page 22</a></li>
+                    <li><b>Training Strategy:</b> Utilized <b>Semantic Warm-start</b> finetune strategy to guide the model’s “semantic compass” from Epoch 1. <a href="../../reports/ass1_text.pdf#page=24" class="pdf-link">page 24</a></li>
+                    <li><b>Efficiency:</b> Achieved near SOTA-level precision ($P@1 > 0.88$) using a lightweight 33M parameter backbone, significantly reducing inference latency.</li>
+                </ul>
+
+                <h4>Performance Benchmark <a href="../../reports/ass1_text.pdf#page=27" class="pdf-link">[page 27]</a></h4>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>Micro F1</th>
+                                <th>Macro F1</th>
+                                <th>P@1</th>
+                                <th>R@1</th>
+                                <th>nDCG@5</th>
+                                <th>Hamming</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>BERT-BASE * (SOTA)</td><td>0.6850</td><td>0.2200</td><td>0.9220</td><td>0.2100</td><td>0.8230</td><td>--</td></tr>
+                            <tr><td>BIGRU-LWAN (L2V)</td><td>0.6120</td><td>0.1850</td><td>0.9130</td><td>0.1980</td><td>0.8040</td><td>--</td></tr>
+                            <tr><td>HAN</td><td>0.5840</td><td>0.1420</td><td>0.8940</td><td>0.1820</td><td>0.7780</td><td>--</td></tr>
+                            <tr class="highlight-row"><td>Vanilla MiniLM (Base)</td><td>0.0511</td><td>0.0314</td><td>0.1695</td><td>0.0347</td><td>0.1050</td><td>0.00160</td></tr>
+                            <tr class="highlight-row"><td>BiLSTM-ASLCB (Ours)</td><td>0.6449</td><td>0.2469</td><td>0.8893</td><td>0.2026</td><td>0.7553</td><td>0.00076</td></tr>
+                            <tr class="highlight-row"><td>Trans-ASLCB (Ours)</td><td>0.6394</td><td>0.2508</td><td>0.8810</td><td>0.2002</td><td>0.7608</td><td>0.00085</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>Limitations</h4>
+                <ul>
+                    <li>Defeated by BERT based on nearly every other Metric than Macro F1 and P@1, P@3 due to low Recall rate (Many False Positive, as trade off).</li>
+                    <li>Confidence logs shows that models only show certainty in top 3-5 labels.</li>
+                    <li>Finetune boost final precision however are fast to concave. Maybe Mini-LM-L12-v2 has been salturated.</li>
+                </ul>
+
+                <p class="italic text-sm text-slate-500 mt-8">
+                    *Note: Our results prove that a "Lightweight Transformer + Advanced Loss" approach yields high-precision results while maintaining resource efficiency for real-time legal indexing. However, result are still somewhat fall shorter than real SOTAs.
+                </p>
+
+                <div class="divider"></div>
+
+                </div>
+
+            <div class="lg:col-span-4 sticky top-10 space-y-6">
+                <div class="sky-card">
+                    <h4 class="font-bold text-[10px] uppercase tracking-widest mb-4 opacity-80">Quick Access</h4>
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                        <a href="#" style="background:rgba(255,255,255,0.2)" class="p-3 rounded-xl text-xs font-bold">GITHUB</a>
+                        <a href="../../reports/assignment1.pdf" style="background:rgba(255,255,255,0.2)" class="p-3 rounded-xl text-xs font-bold text-white">REPORT</a>
+                    </div>
+                </div>
+
+                <a href="./text.html" style="text-decoration:none" class="sky-card block group">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center"><i class="fas fa-font"></i></div>
+                        <span class="text-[10px] font-mono opacity-70">p.27</span>
+                    </div>
+                    <h4 class="text-white text-xl font-bold">Inference Demo</h4>
+                    <div class="mt-4 flex items-center text-[10px] font-bold uppercase tracking-widest group-hover:translate-x-2 transition-transform">
+                        Try Odoc <i class="fas fa-chevron-right ml-2"></i>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

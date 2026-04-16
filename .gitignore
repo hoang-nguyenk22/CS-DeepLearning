@@ -2,7 +2,7 @@
 venv/
 .venv/
 env/
-
+chibeo.py
 # Python Cache
 __pycache__/
 *.py[cod]
