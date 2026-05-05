@@ -1,0 +1,7 @@
+data/
+model/weight/*.pt
+model/weight/eurlex/*.pt
+model/weight/cs/*.pt
+
+
+__pycache__/

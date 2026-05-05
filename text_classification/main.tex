@@ -1,0 +1,249 @@
+\documentclass[a4paper]{report}
+\usepackage{a4wide, amssymb, epsfig, latexsym, multicol, array, hhline, fancyhdr}
+\usepackage{vntex}
+\usepackage{amsmath}
+\usepackage{lastpage}
+\usepackage[lined, boxed, commentsnumbered]{algorithm2e}
+\usepackage{enumerate}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{minted}
+\usepackage{array}
+\usepackage{tabularx, caption}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{listings}
+\usepackage{rotating}
+\usepackage{float}
+\usepackage{graphics}
+\usepackage[english]{babel}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{epsfig}
+\usepackage{tikz}
+\usepackage{framed}
+\usepackage{longtable}
+\usepackage[listings, theorems]{tcolorbox}
+\usepackage{lineno}
+\usepackage{ulem}
+
+% TikZ libraries
+\usetikzlibrary{shapes,arrows,positioning,calc,fit,backgrounds,mindmap,shapes.geometric,shapes.symbols}
+
+% Listing settings
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny,
+    showstringspaces=false,
+    tabsize=2
+}
+
+% Custom colors
+\definecolor{lightblue}{RGB}{240,248,255}
+\definecolor{lightgreen}{RGB}{240,255,240}
+\definecolor{codegreen}{rgb}{0, 0.6, 0}
+\definecolor{codegray}{rgb}{0.5, 0.5, 0.5}
+\definecolor{codepurple}{rgb}{0.58, 0, 0.82}
+\definecolor{backcolour}{RGB}{254,236,245}
+
+% Custom TikZ styles
+\tikzstyle{service}=[rectangle,draw=black,fill=lightblue,minimum width=2.5cm,minimum height=1cm]
+\tikzstyle{database}=[rectangle,draw=black,fill=lightgreen,minimum width=2cm,minimum height=1cm]
+\tikzstyle{actor}=[rectangle,draw=black,fill=lightblue,minimum width=2cm,minimum height=1cm]
+\tikzstyle{system}=[rectangle,draw=black,fill=lightgreen,minimum width=2cm,minimum height=1cm]
+\tikzstyle{flow}=[->,thick]
+
+\usetikzlibrary{arrows, snakes, backgrounds}
+\usepackage{url}
+\captionsetup[figure]{labelfont=bf}
+\captionsetup[figure]{name=Figure}
+\captionsetup[table]{labelfont=bf}
+\captionsetup[table]{name=Table}
+\hypersetup{urlcolor = blue, linkcolor = black, citecolor = black, colorlinks = true}
+\newtheorem{theorem}{{\bf Theorem}}
+\newtheorem{property}{{\bf Property}}
+\newtheorem{proposition}{{\bf Proposition}}
+\newtheorem{corollary}[proposition]{{\bf Corollary}}
+\newtheorem{lemma}[proposition]{{\bf Lemma}}
+
+\AtBeginDocument{\renewcommand * \contentsname{Contents}}
+\AtBeginDocument{\renewcommand * \refname{References}}
+\setlength{\headheight}{40pt}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyhead[L]{
+    \begin{tabular}{rl}
+        \begin{picture}(25, 15)(0, 0)
+            \put(0, -8){\includegraphics[width=8mm, height=8mm]{HCMUT.png}}
+        \end{picture}&
+        \begin{tabular}{l}
+            \textbf{\bf \ttfamily University of Technology, Ho Chi Minh City}\\
+            \textbf{\bf \ttfamily Faculty of Computer Science and Engineering}
+        \end{tabular}
+    \end{tabular}
+}
+\fancyhead[R]{
+    \begin{tabular}{l}
+        \tiny \bf\\
+        \tiny \bf
+    \end{tabular}
+}
+\fancyfoot{} % Clear all footer fields
+\fancyfoot[L]{\scriptsize \ttfamily Assignment for Machine Learning - Academic Year 2025 - 2026}
+\fancyfoot[R]{\scriptsize \ttfamily Page {\thepage}/\pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\footrulewidth}{0.3pt}
+%%%
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{3}
+\makeatletter
+\newcounter{subsubsubsection}[subsubsection]
+\renewcommand\thesubsubsubsection{\thesubsubsection .\@alph\c@subsubsubsection}
+\newcommand\subsubsubsection{\@startsection{subsubsubsection}{4}{\z@}%
+    {-3.25ex\@plus -1ex \@minus -.2ex}%
+    {1.5ex \@plus .2ex}%
+    {\normalfont\normalsize\bfseries}}
+\newcommand*\l@subsubsubsection{\@dottedtocline{3}{10.0em}{4.1em}}
+\newcommand*{\subsubsubsectionmark}[1]{}
+\makeatother
+\newcommand{\dstc}[2]{
+    \newdimen\stringwidth\setbox0=\hbox{#1}
+    \stringwidth=\wd0
+    \hspace*{-\parindent}\hspace*{.5\textwidth}\hspace*{-.5\wd0}#1\hfill #2\bigskip
+}
+
+\lstdefinestyle{mystyle1}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\small,
+    aboveskip=0.5mm,
+    belowskip=0.5mm,
+    columns=flexible,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=7pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+\lstset{style=mystyle1}
+
+\begin{document}
+    \begin{titlepage}
+        \begin{center}
+            VIETNAM NATIONAL UNIVERSITY, HO CHI MINH CITY\\
+            UNIVERSITY OF TECHNOLOGY\\
+            FACULTY OF COMPUTER SCIENCE AND ENGINEERING
+        \end{center}
+    \vspace{1cm}
+    \begin{figure}[H]
+        \begin{center}
+            \includegraphics[width=4cm]{hcmut.png}
+        \end{center}
+    \end{figure}
+    \vspace{1cm}
+    \begin{center}
+        \begin{tabular}{c}
+            \multicolumn{1}{l}{\textbf{{\Large Deep Learning and Its Applications (CO3133)}}}\\
+            ~~\\
+            \hline
+            \\[0.3cm]
+            \textbf{\LARGE Assignment 1: Application of Deep Learning in}\\[0.2cm]
+            \textbf{\LARGE Classification of Text, Image and Multimodal data}\\[0.2cm]
+            \\[0.3cm]
+            \hline
+        \end{tabular}
+    \end{center}
+
+    \begin{table}[h]
+        \begin{tabular}{rrl}
+            \hspace{4cm} & \textbf{Advisor}: & Ph.D Lê Thành Sách\\
+            & \textbf{Students}: & Vũ Hoàng Tùng - 2252886\\
+            &                    & Vũ Minh Quân  -- 2212828\\
+        \end{tabular}
+    \end{table}
+    \vspace{4cm}
+    \begin{center}
+        {\footnotesize HO CHI MINH CITY, April 2026}
+    \end{center}
+    \end{titlepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+\section*{Acknowledgement}
+We would like to show our foremost appreciation to PhD. Lê Thành Sách. His Lectures on Deep Learning model and its implementation always deliver fundamentals of great depth as well as illustration of practical applications by truly comprehensive means. His guidance and visualization of knowledge have laid foundation to our current and upcoming Assignments.
+
+We also thank the pioneers of Deep Learning researchers, especially in the field of Classification. Their intelligent and creative works truly motivate us to challenge ourself more out of the norm. Final thanks for any support and consultancy of our friends of same department.
+\newpage
+\section*{Contributions}
+The following table summarizes the contributions of team members to this project:
+
+\begin{table}[H]
+\centering
+\caption{Team Member Contributions}
+\label{tab:contributions}
+\begin{tabular}{|p{3.5cm}|p{10.5cm}|}
+\hline
+\textbf{Team Member} & \textbf{Contributions} \\ \hline
+\textbf{Vũ Minh Quân} (2212828) &
+\begin{itemize}
+    \item 
+\end{itemize} \\ \hline
+\textbf{Vũ Hoàng Tùng} (2252886) &
+\begin{itemize}
+    \item 
+\end{itemize} \\ \hline
+\textbf{Nguyễn Việt Hoàng} (2252235) &
+\begin{itemize}
+    \item 
+\end{itemize} \\ \hline
+\end{tabular}
+\end{table}
+
+\newpage
+\tableofcontents
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Text classification}
+\section*{Abstract}
+\newpage
+\section{Introduction}
+\subsection{Motivation}
+Current era witness rapid technological development, with millions of research entities, teams and organizations, contribute millions of researches and projects that benefit mankind and inspire next generations. And thanks to the digital world we have, these contributions are super easy to access. Massive collaborative platforms such as Stack Overflow, ResearchGate, and specialized scholarly forums have been founded. On these platforms, dozens of thousands of valuable technical questions, documents and research articles are contributed daily, accumulate to billions of documents and questions in various fields. Effective organization of this unstructured data is always for:
+\begin{itemize}
+    \item {Content Discoverability:} Enabling researchers and students to locate specific technical solutions and topics among millions of posts.
+    \item {Expert Routing:} Automatically directing new queries to the most qualified contributors based on domain-specific tags.
+    \item {Knowledge Graph Construction:} Establishing semantic links between disparate academic topics to facilitate cross-disciplinary learning.
+    \item E.c.t \textbf{.......}
+\end{itemize}
+Successfully organize those data will help students and researchers all over the world when it comes to self-studying, literature review and researches conduction, facilitating study-research motion worldwide. However, manual tagging is often inconsistent, incomplete, or entirely absent, necessitating robust automated systems capable of navigating complex scientific taxonomies.
+
+\subsection{Problem Statement}
+The core challenge addressed in this study is the application of \textbf{Extreme Multi-label Classification (XMC)} to the automated tagging of academic forum content. Unlike standard classification, the problem is defined as follows:
+
+Given an input document $x$ (e.g., a forum post or a research abstract), the goal is to find a subset of labels $y \subseteq L$ from an extremely large label space $L$ where $|L|$ can reach hundreds or thousands. 
+
+In the context of academic forums, this task presents several rigorous technical hurdles:
+\begin{enumerate}
+    \item \textbf{Label Sparsity and Power-law Distribution:} A small fraction of "head" tags (e.g., \textit{Python}, \textit{Mathematics}) appear frequently, while the vast majority of specialized "tail" tags (e.g., \textit{Riemannian-Manifold}, \textit{Asynchronous-IO}) suffer from a severe lack of training samples.
+    \item \textbf{Semantic Overlap:} Labels in academic domains are often hierarchically related or semantically correlated, requiring the model to understand label dependencies rather than treating them as independent categories.
+    \item \textbf{Computational Scalability:} Traditional output layers like Softmax become computationally prohibitive when dealing with $10^5$ labels. The system must utilize efficient architectures such as label trees or negative sampling to maintain real-time performance.
+\end{enumerate}
+This chapter pays a deep research into advanced Deep Learning techniques in order to construct a Language model that that accurately predicts relevant tag $l \in L$ for a given academic text $x$, optimizing for metrics such as Macro/Micro F1, nDCG@k and Hamming Loss to account for the long-tail nature of the data.
+
+
+\newpage
+\input{Ref.tex}
+\end{document}

@@ -1,0 +1,41 @@
+{
+  "name": "Python 3",
+  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.11-bookworm",
+  "workspaceFolder": "/workspace/${localWorkspaceFolderBasename}/text_classification",
+    
+    "remoteEnv": {
+        "PYTHONPATH": "/workspace/${localWorkspaceFolderBasename}/text_classification"
+    },
+  "customizations": {
+    "codespaces": {
+      "openFiles": [
+        "README.md",
+        "text_classification/app/demo.py"
+      ]
+    },
+    "vscode": {
+      "settings": {},
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  },
+  "remoteEnv": {
+    "PYTHONPATH": "${containerWorkspaceFolder}/text_classification"
+  },
+  "updateContentCommand": "pip3 install --user -r text_classification/requirements.txt && pip3 install --user streamlit && echo '✅ Requirements met'",
+  "postAttachCommand": {
+    "server": "cd text_classification && streamlit run app/demo.py --server.enableCORS false --server.enableXsrfProtection false"
+  },
+  "portsAttributes": {
+    "8501": {
+      "label": "Application",
+      "onAutoForward": "openPreview"
+    }
+  },
+  "forwardPorts": [
+    8501
+  ]
+}
